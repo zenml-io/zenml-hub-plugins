@@ -1,0 +1,183 @@
+[tool.poetry]
+name = "zenml_hub_plugins"
+version = "0.0.1"
+description = "ZenML Hub Plugins"
+authors = ["ZenML GmbH <info@zenml.io>"]
+readme = "README.md"
+homepage = "https://zenml.io"
+documentation = "https://docs.zenml.io"
+repository = "https://github.com/zenml-io/zenml-hub-plugins"
+license = "Apache-2.0"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: System :: Distributed Computing",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+mypy = "^0.991"
+ruff = "^0.0.241"
+typing-extensions = ">=3.7.4"
+darglint = "^1.8.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 79
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    '__init__.py',
+    'src/zenml/cli/version.py',
+]
+per-file-ignores = {}
+select = ["D", "E", "F", "I", "I001", "Q"]
+ignore = ["E501", "F401", "F403", "D301", "D401", "D403", "D407", "D213", "D203", "S101", "S104", "S105", "S106", "S107"]
+src = ["src", "test"]
+# use Python 3.7 as the minimum version for autofixing
+target-version = "py37"
+ignore-init-module-imports = true
+# Disable autofix for unused imports (`F401`).
+unfixable = ["F401"]
+
+[tool.ruff.flake8-import-conventions.aliases]
+altair = "alt"
+"matplotlib.pyplot" = "plt"
+numpy = "np"
+pandas = "pd"
+seaborn = "sns"
+
+[tool.ruff.mccabe]
+max-complexity = 18
+
+[tool.ruff.pydocstyle]
+# Use Google-style docstrings.
+convention = "google"
+
+[tool.mypy]
+strict = true
+namespace_packages = true
+show_error_codes = true
+
+# temporary fix for python 3.8 https://github.com/apache/airflow/discussions/19006
+# remove once the issue is solved in airflow
+exclude = "airflow/"
+
+[[tool.mypy.overrides]]
+module = [
+    "airflow.*",
+    ]
+follow_imports = "skip"
+
+# end of fix
+
+# import all google and transformers files as `Any`
+[[tool.mypy.overrides]]
+module = [
+    "google.*" ,
+    "transformers.*"  # https://github.com/huggingface/transformers/issues/13390
+]
+follow_imports = "skip"
+
+[[tool.mypy.overrides]]
+module = [
+    "tensorflow.*",
+    "apache_beam.*",
+    "pandas.*",
+    "ml_metadata.*",
+    "distro.*",
+    "analytics.*",
+    "absl.*",
+    "gcsfs.*",
+    "s3fs.*",
+    "adlfs.*",
+    "fsspec.*",
+    "torch.*",
+    "pytorch_lightning.*",
+    "sklearn.*",
+    "numpy.*",
+    "facets_overview.*",
+    "IPython.core.*",
+    "plotly.*",
+    "graphviz.*",
+    "dash.*",
+    "dash_bootstrap_components.*",
+    "dash_cytoscape",
+    "dash.dependencies",
+    "docker.*",
+    "flask.*",
+    "kfp.*",
+    "kubernetes.*",
+    "kserve.*",
+    "urllib3.*",
+    "kfp_server_api.*",
+    "sagemaker.*",
+    "azureml.*",
+    "google.*",
+    "neuralprophet.*",
+    "lightgbm.*",
+    "scipy.*",
+    "deepchecks.*",
+    "boto3.*",
+    "botocore.*",
+    "jupyter_dash.*",
+    "slack_sdk.*",
+    "azure-keyvault-keys.*",
+    "model_archiver.*",
+    "kfp_tekton.*",
+    "mlflow.*",
+    "python_terraform.*",
+    "bentoml.*",
+    "multipart.*",
+    "jose.*",
+    "fastapi_utils.*",
+    "sqlalchemy_utils.*",
+    "copier.*"
+]
+ignore_missing_imports = true
+
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+	\.git
+| \.hg
+| \.mypy_cache
+| \.tox
+| \.venv
+| _build
+| buck-out
+| build
+)/
+'''
