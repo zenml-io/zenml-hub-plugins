@@ -11,26 +11,29 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
-"""Implementation of the KServe Deployer step."""
+"""Implementation of the Seldon Deployer step."""
+
 import os
-from typing import List, Optional, cast
+from typing import Optional, cast
 
 from pydantic import BaseModel, validator
-
 from zenml.constants import MODEL_METADATA_YAML_FILE_NAME
 from zenml.environment import Environment
 from zenml.exceptions import DoesNotExistException
-from zenml.integrations.kserve.constants import (
-    KSERVE_CUSTOM_DEPLOYMENT,
-    KSERVE_DOCKER_IMAGE_KEY,
+from zenml.integrations.seldon.constants import (
+    SELDON_CUSTOM_DEPLOYMENT,
+    SELDON_DOCKER_IMAGE_KEY,
 )
-from zenml.integrations.kserve.model_deployers.kserve_model_deployer import (
-    DEFAULT_KSERVE_DEPLOYMENT_START_STOP_TIMEOUT,
-    KServeModelDeployer,
+from zenml.integrations.seldon.model_deployers.seldon_model_deployer import (
+    DEFAULT_SELDON_DEPLOYMENT_START_STOP_TIMEOUT,
+    SeldonModelDeployer,
 )
-from zenml.integrations.kserve.services.kserve_deployment import (
-    KServeDeploymentConfig,
-    KServeDeploymentService,
+from zenml.integrations.seldon.seldon_client import (
+    create_seldon_core_custom_spec,
+)
+from zenml.integrations.seldon.services.seldon_deployment import (
+    SeldonDeploymentConfig,
+    SeldonDeploymentService,
 )
 from zenml.io import fileio
 from zenml.logger import get_logger
@@ -44,139 +47,22 @@ from zenml.steps import (
 from zenml.steps.step_context import StepContext
 from zenml.utils import io_utils
 from zenml.utils.materializer_utils import save_model_metadata
-from zenml.utils.source_utils import import_class_by_path, is_inside_repository
+from zenml.utils.source_utils import import_class_by_path
 
 logger = get_logger(__name__)
-
-TORCH_HANDLERS = [
-    "image_classifier",
-    "image_segmenter",
-    "object_detector",
-    "text_classifier",
-]
-
-
-class TorchServeParameters(BaseModel):
-    """KServe PyTorch model deployer step configuration.
-
-    Attributes:
-        model_class: Path to Python file containing model architecture.
-        handler: TorchServe's handler file to handle custom TorchServe inference
-            logic.
-        extra_files: Comma separated path to extra dependency files.
-        model_version: Model version.
-        requirements_file: Path to requirements file.
-        torch_config: TorchServe configuration file path.
-    """
-
-    model_class: str
-    handler: str
-    extra_files: Optional[List[str]] = None
-    requirements_file: Optional[str] = None
-    model_version: Optional[str] = "1.0"
-    torch_config: Optional[str] = None
-
-    @validator("model_class")
-    def model_class_validate(cls, v: str) -> str:
-        """Validate model class file path.
-
-        Args:
-            v: model class file path
-
-        Returns:
-            model class file path
-
-        Raises:
-            ValueError: if model class file path is not valid
-        """
-        if not v:
-            raise ValueError("Model class file path is required.")
-        if not is_inside_repository(v):
-            raise ValueError(
-                "Model class file path must be inside the repository."
-            )
-        return v
-
-    @validator("handler")
-    def handler_validate(cls, v: str) -> str:
-        """Validate handler.
-
-        Args:
-            v: handler file path
-
-        Returns:
-            handler file path
-
-        Raises:
-            ValueError: if handler file path is not valid
-        """
-        if v:
-            if v in TORCH_HANDLERS:
-                return v
-            elif is_inside_repository(v):
-                return v
-            else:
-                raise ValueError(
-                    "Handler must be one of the TorchServe handlers",
-                    "or a file that exists inside the repository.",
-                )
-        else:
-            raise ValueError("Handler is required.")
-
-    @validator("extra_files")
-    def extra_files_validate(
-        cls, v: Optional[List[str]]
-    ) -> Optional[List[str]]:
-        """Validate extra files.
-
-        Args:
-            v: extra files path
-
-        Returns:
-            extra files path
-
-        Raises:
-            ValueError: if the extra files path is not valid
-        """
-        extra_files = []
-        if v is not None:
-            for file_path in v:
-                if is_inside_repository(file_path):
-                    extra_files.append(file_path)
-                else:
-                    raise ValueError(
-                        "Extra file path must be inside the repository."
-                    )
-            return extra_files
-        return v
-
-    @validator("torch_config")
-    def torch_config_validate(cls, v: Optional[str]) -> Optional[str]:
-        """Validate torch config file.
-
-        Args:
-            v: torch config file path
-
-        Returns:
-            torch config file path
-
-        Raises:
-            ValueError: if torch config file path is not valid.
-        """
-        if v:
-            if is_inside_repository(v):
-                return v
-            else:
-                raise ValueError(
-                    "Torch config file path must be inside the repository."
-                )
-        return v
 
 
 class CustomDeployParameters(BaseModel):
     """Custom model deployer step extra parameters.
 
     Attributes:
+        predict_function: Path to Python file containing predict function.
+
+    Raises:
+        ValueError: If predict_function is not specified.
+        TypeError: If predict_function is not a callable function.
+
+    Returns:
         predict_function: Path to Python file containing predict function.
     """
 
@@ -205,32 +91,34 @@ class CustomDeployParameters(BaseModel):
         return predict_func_path
 
 
-class KServeDeployerStepParameters(BaseParameters):
-    """KServe model deployer step parameters.
+class SeldonDeployerStepParameters(BaseParameters):
+    """Seldon model deployer step parameters.
 
     Attributes:
-        service_config: KServe deployment service configuration.
-        torch_serve_params: TorchServe set of parameters to deploy model.
-        timeout: Timeout for model deployment.
+        service_config: Seldon Core deployment service configuration.
+        secrets: a list of ZenML secrets containing additional configuration
+            parameters for the Seldon Core deployment (e.g. credentials to
+            access the Artifact Store where the models are stored). If supplied,
+            the information fetched from these secrets is passed to the Seldon
+            Core deployment server as a list of environment variables.
     """
 
-    service_config: KServeDeploymentConfig
+    service_config: SeldonDeploymentConfig
     custom_deploy_parameters: Optional[CustomDeployParameters] = None
-    torch_serve_parameters: Optional[TorchServeParameters] = None
-    timeout: int = DEFAULT_KSERVE_DEPLOYMENT_START_STOP_TIMEOUT
+    timeout: int = DEFAULT_SELDON_DEPLOYMENT_START_STOP_TIMEOUT
 
 
 @step(enable_cache=False)
-def kserve_model_deployer_step(
+def seldon_model_deployer_step(
     deploy_decision: bool,
-    params: KServeDeployerStepParameters,
+    params: SeldonDeployerStepParameters,
     context: StepContext,
     model: UnmaterializedArtifact,
-) -> KServeDeploymentService:
-    """KServe model deployer pipeline step.
+) -> SeldonDeploymentService:
+    """Seldon Core model deployer pipeline step.
 
     This step can be used in a pipeline to implement continuous
-    deployment for an ML model with KServe.
+    deployment for a ML model with Seldon Core.
 
     Args:
         deploy_decision: whether to deploy the model or not
@@ -239,10 +127,10 @@ def kserve_model_deployer_step(
         context: the step context
 
     Returns:
-        KServe deployment service
+        Seldon Core deployment service
     """
     model_deployer = cast(
-        KServeModelDeployer, KServeModelDeployer.get_active_model_deployer()
+        SeldonModelDeployer, SeldonModelDeployer.get_active_model_deployer()
     )
 
     # get pipeline name, step name and run id
@@ -256,6 +144,65 @@ def kserve_model_deployer_step(
     params.service_config.pipeline_run_id = run_name
     params.service_config.pipeline_step_name = step_name
 
+    def prepare_service_config(model_uri: str) -> SeldonDeploymentConfig:
+        """Prepare the model files for model serving.
+
+        This creates and returns a Seldon service configuration for the model.
+
+        This function ensures that the model files are in the correct format
+        and file structure required by the Seldon Core server implementation
+        used for model serving.
+
+        Args:
+            model_uri: the URI of the model artifact being served
+
+        Returns:
+            The URL to the model ready for serving.
+
+        Raises:
+            RuntimeError: if the model files were not found
+        """
+        served_model_uri = os.path.join(
+            context.get_output_artifact_uri(), "seldon"
+        )
+        fileio.makedirs(served_model_uri)
+
+        # TODO [ENG-773]: determine how to formalize how models are organized into
+        #   folders and sub-folders depending on the model type/format and the
+        #   Seldon Core protocol used to serve the model.
+
+        # TODO [ENG-791]: auto-detect built-in Seldon server implementation
+        #   from the model artifact type
+
+        # TODO [ENG-792]: validate the model artifact type against the
+        #   supported built-in Seldon server implementations
+        if params.service_config.implementation == "TENSORFLOW_SERVER":
+            # the TensorFlow server expects model artifacts to be
+            # stored in numbered subdirectories, each representing a model
+            # version
+            io_utils.copy_dir(model_uri, os.path.join(served_model_uri, "1"))
+        elif params.service_config.implementation == "SKLEARN_SERVER":
+            # the sklearn server expects model artifacts to be
+            # stored in a file called model.joblib
+            model_uri = os.path.join(model.uri, "model")
+            if not fileio.exists(model.uri):
+                raise RuntimeError(
+                    f"Expected sklearn model artifact was not found at "
+                    f"{model_uri}"
+                )
+            fileio.copy(
+                model_uri, os.path.join(served_model_uri, "model.joblib")
+            )
+        else:
+            # default treatment for all other server implementations is to
+            # simply reuse the model from the artifact store path where it
+            # is originally stored
+            served_model_uri = model_uri
+
+        service_config = params.service_config.copy()
+        service_config.model_uri = served_model_uri
+        return service_config
+
     # fetch existing services with same pipeline name, step name and
     # model name
     existing_services = model_deployer.find_model_server(
@@ -264,17 +211,17 @@ def kserve_model_deployer_step(
         model_name=params.service_config.model_name,
     )
 
-    # even when the deploy decision is negative if an existing model server
+    # even when the deploy decision is negative, if an existing model server
     # is not running for this pipeline/step, we still have to serve the
     # current model, to ensure that a model server is available at all times
     if not deploy_decision and existing_services:
         logger.info(
             f"Skipping model deployment because the model quality does not "
-            f"meet the criteria. Reusing the last model server deployed by step "
+            f"meet the criteria. Reusing last model server deployed by step "
             f"'{step_name}' and pipeline '{pipeline_name}' for model "
             f"'{params.service_config.model_name}'..."
         )
-        service = cast(KServeDeploymentService, existing_services[0])
+        service = cast(SeldonDeploymentService, existing_services[0])
         # even when the deploy decision is negative, we still need to start
         # the previous model server if it is no longer running, to ensure that
         # a model server is available at all times
@@ -282,60 +229,36 @@ def kserve_model_deployer_step(
             service.start(timeout=params.timeout)
         return service
 
-    # invoke the KServe model deployer to create a new service
+    # invoke the Seldon Core model deployer to create a new service
     # or update an existing one that was previously deployed for the same
     # model
-    if params.service_config.predictor == "pytorch":
-        # import the prepare function from the step utils
-        from zenml.integrations.kserve.steps.kserve_step_utils import (
-            prepare_torch_service_config,
-        )
-
-        # prepare the service config
-        service_config = prepare_torch_service_config(
-            model_uri=model.uri,
-            output_artifact_uri=context.get_output_artifact_uri(),
-            params=params,
-        )
-    else:
-        # import the prepare function from the step utils
-        from zenml.integrations.kserve.steps.kserve_step_utils import (
-            prepare_service_config,
-        )
-
-        # prepare the service config
-        service_config = prepare_service_config(
-            model_uri=model.uri,
-            output_artifact_uri=context.get_output_artifact_uri(),
-            params=params,
-        )
+    service_config = prepare_service_config(model.uri)
     service = cast(
-        KServeDeploymentService,
+        SeldonDeploymentService,
         model_deployer.deploy_model(
             service_config, replace=True, timeout=params.timeout
         ),
     )
 
     logger.info(
-        f"KServe deployment service started and reachable at:\n"
+        f"Seldon deployment service started and reachable at:\n"
         f"    {service.prediction_url}\n"
-        f"    With the hostname: {service.prediction_hostname}."
     )
 
     return service
 
 
-@step(enable_cache=False, extra={KSERVE_CUSTOM_DEPLOYMENT: True})
-def kserve_custom_model_deployer_step(
+@step(enable_cache=False, extra={SELDON_CUSTOM_DEPLOYMENT: True})
+def seldon_custom_model_deployer_step(
     deploy_decision: bool,
-    params: KServeDeployerStepParameters,
+    params: SeldonDeployerStepParameters,
     context: StepContext,
     model: UnmaterializedArtifact,
-) -> KServeDeploymentService:
-    """KServe custom model deployer pipeline step.
+) -> SeldonDeploymentService:
+    """Seldon Core custom model deployer pipeline step.
 
     This step can be used in a pipeline to implement the
-    process required to deploy a custom model with KServe.
+    the process required to deploy a custom model with Seldon Core.
 
     Args:
         deploy_decision: whether to deploy the model or not
@@ -344,23 +267,21 @@ def kserve_custom_model_deployer_step(
         context: the step context
 
     Raises:
-        ValueError: if the custom deployer parameters is not defined
-        DoesNotExistException: if no active stack is found
-
+        ValueError: if the custom deployer is not defined
+        DoesNotExistException: if an entity does not exist raise an exception
 
     Returns:
-        KServe deployment service
+        Seldon Core deployment service
     """
     # verify that a custom deployer is defined
     if not params.custom_deploy_parameters:
         raise ValueError(
-            "Custom deploy parameter which contains the path of the",
-            "custom predict function is required for custom model deployment.",
+            "Custom deploy parameter is required as part of the step configuration this parameter is",
+            "the path of the custom predict function",
         )
-
     # get the active model deployer
     model_deployer = cast(
-        KServeModelDeployer, KServeModelDeployer.get_active_model_deployer()
+        SeldonModelDeployer, SeldonModelDeployer.get_active_model_deployer()
     )
 
     # get pipeline name, step name, run id
@@ -373,38 +294,38 @@ def kserve_custom_model_deployer_step(
     params.service_config.pipeline_name = pipeline_name
     params.service_config.pipeline_run_id = run_name
     params.service_config.pipeline_step_name = step_name
+    params.service_config.is_custom_deployment = True
 
-    # fetch existing services with same pipeline name, step name and
+    # fetch existing services with the same pipeline name, step name and
     # model name
     existing_services = model_deployer.find_model_server(
         pipeline_name=pipeline_name,
         pipeline_step_name=step_name,
         model_name=params.service_config.model_name,
     )
-
     # even when the deploy decision is negative if an existing model server
     # is not running for this pipeline/step, we still have to serve the
     # current model, to ensure that a model server is available at all times
     if not deploy_decision and existing_services:
         logger.info(
-            f"Skipping model deployment because the model quality does not "
-            f"meet the criteria. Reusing the last model server deployed by step "
+            f"Skipping model deployment because the model quality does not"
+            f" meet the criteria. Reusing the last model server deployed by step "
             f"'{step_name}' and pipeline '{pipeline_name}' for model "
             f"'{params.service_config.model_name}'..."
         )
-        service = cast(KServeDeploymentService, existing_services[0])
-        # even when the deploy decision is negative, we still need to start
+        service = cast(SeldonDeploymentService, existing_services[0])
+        # even when the deployment decision is negative, we still need to start
         # the previous model server if it is no longer running, to ensure that
         # a model server is available at all times
         if not service.is_running:
             service.start(timeout=params.timeout)
         return service
 
-    # entrypoint for starting KServe server deployment for custom model
+    # entrypoint for starting Seldon microservice deployment for custom model
     entrypoint_command = [
         "python",
         "-m",
-        "zenml.integrations.kserve.custom_deployer.zenml_custom_model",
+        "zenml.integrations.seldon.custom_deployer.zenml_custom_model",
         "--model_name",
         params.service_config.model_name,
         "--predict_func",
@@ -420,12 +341,12 @@ def kserve_custom_model_deployer_step(
     context.stack
 
     docker_image = step_env.step_run_info.pipeline.extra[
-        KSERVE_DOCKER_IMAGE_KEY
+        SELDON_DOCKER_IMAGE_KEY
     ]
 
-    # copy the model files to a new specific directory for the deployment
+    # copy the model files to new specific directory for the deployment
     served_model_uri = os.path.join(
-        context.get_output_artifact_uri(), "kserve"
+        context.get_output_artifact_uri(), "seldon"
     )
     fileio.makedirs(served_model_uri)
     io_utils.copy_dir(model.uri, served_model_uri)
@@ -442,26 +363,25 @@ def kserve_custom_model_deployer_step(
     service_config = params.service_config.copy()
     service_config.model_uri = served_model_uri
 
-    # Prepare container config for custom model deployment
-    service_config.container = {
-        "name": service_config.model_name,
-        "image": docker_image,
-        "command": entrypoint_command,
-        "storage_uri": service_config.model_uri,
-    }
+    # create the specification for the custom deployment
+    service_config.spec = create_seldon_core_custom_spec(
+        model_uri=service_config.model_uri,
+        custom_docker_image=docker_image,
+        secret_name=model_deployer.kubernetes_secret_name,
+        command=entrypoint_command,
+    )
 
     # deploy the service
     service = cast(
-        KServeDeploymentService,
+        SeldonDeploymentService,
         model_deployer.deploy_model(
             service_config, replace=True, timeout=params.timeout
         ),
     )
 
     logger.info(
-        f"KServe deployment service started and reachable at:\n"
+        f"Seldon Core deployment service started and reachable at:\n"
         f"    {service.prediction_url}\n"
-        f"    With the hostname: {service.prediction_hostname}."
     )
 
     return service

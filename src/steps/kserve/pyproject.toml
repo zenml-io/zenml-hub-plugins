@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "zenml_hub_kserve"
+description = "ZenML KServe steps"
+version = "0.0.1"
+authors = ["ZenML GmbH <info@zenml.io>"]
+packages = [
+    { include = "zenml_hub_kserve", from = "src" },
+]
+readme = "README.md"
+homepage = "https://zenml.io"
+documentation = "https://docs.zenml.io"
+repository = "https://github.com/zenml-io/zenml-hub-plugins"
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: System :: Distributed Computing",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[tool.poetry.dependencies]
+kserve = "0.9.0"
+torch-model-archiver = ">=0"
+
+[tool.poetry.plugins.'zenml.plugins']
+kserve = 'zenml_hub_kserve'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

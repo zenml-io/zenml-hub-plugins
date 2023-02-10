@@ -16,7 +16,6 @@ from typing import List, Optional, cast
 
 import bentoml
 from bentoml._internal.bento import bento
-
 from zenml.environment import Environment
 from zenml.integrations.bentoml.model_deployers.bentoml_model_deployer import (
     BentoMLModelDeployer,

@@ -19,7 +19,6 @@ from typing import Any, Dict, List, Optional
 import bentoml
 from bentoml import bentos
 from bentoml._internal.bento import bento
-
 from zenml.integrations.bentoml.constants import DEFAULT_BENTO_FILENAME
 from zenml.logger import get_logger
 from zenml.materializers import UnmaterializedArtifact
