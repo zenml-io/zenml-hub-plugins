@@ -3,9 +3,7 @@ name = "zenml_hub_bentoml"
 description = "ZenML BentoML steps"
 version = "0.0.1"
 authors = ["ZenML GmbH <info@zenml.io>"]
-packages = [
-    { include = "zenml_hub_bentoml", from = "src" },
-]
+packages = [{include = "zenml", from = "src"}]
 readme = "README.md"
 homepage = "https://zenml.io"
 documentation = "https://docs.zenml.io"
@@ -28,9 +26,6 @@ classifiers = [
 
 [tool.poetry.dependencies]
 bentoml = ">=1.0.10"
-
-[tool.poetry.plugins.'zenml.plugins']
-bentoml = 'zenml_hub_bentoml'
 
 [build-system]
 requires = ["poetry-core"]

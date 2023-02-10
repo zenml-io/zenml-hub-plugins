@@ -3,9 +3,7 @@ name = "zenml_hub_seldon"
 description = "ZenML Seldon steps"
 version = "0.0.1"
 authors = ["ZenML GmbH <info@zenml.io>"]
-packages = [
-    { include = "zenml_hub_seldon", from = "src" },
-]
+packages = [{include = "zenml", from = "src"}]
 readme = "README.md"
 homepage = "https://zenml.io"
 documentation = "https://docs.zenml.io"
@@ -29,9 +27,6 @@ classifiers = [
 [tool.poetry.dependencies]
 kubernetes = "18.20.0"
 seldon-core = "1.15.0"
-
-[tool.poetry.plugins.'zenml.plugins']
-seldon = 'zenml_hub_seldon'
 
 [build-system]
 requires = ["poetry-core"]

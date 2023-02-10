@@ -3,9 +3,7 @@ name = "zenml_hub_slack"
 description = "ZenML Slack steps"
 version = "0.0.1"
 authors = ["ZenML GmbH <info@zenml.io>"]
-packages = [
-    { include = "zenml_hub_slack", from = "src" },
-]
+packages = [{include = "zenml", from = "src"}]
 readme = "README.md"
 homepage = "https://zenml.io"
 documentation = "https://docs.zenml.io"
@@ -29,9 +27,6 @@ classifiers = [
 [tool.poetry.dependencies]
 slack-sdk = ">=3.16.1"
 aiohttp = ">=3.8.1"
-
-[tool.poetry.plugins.'zenml.plugins']
-slack = 'zenml_hub_slack'
 
 [build-system]
 requires = ["poetry-core"]

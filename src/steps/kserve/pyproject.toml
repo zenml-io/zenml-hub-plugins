@@ -3,9 +3,7 @@ name = "zenml_hub_kserve"
 description = "ZenML KServe steps"
 version = "0.0.1"
 authors = ["ZenML GmbH <info@zenml.io>"]
-packages = [
-    { include = "zenml_hub_kserve", from = "src" },
-]
+packages = [{include = "zenml", from = "src"}]
 readme = "README.md"
 homepage = "https://zenml.io"
 documentation = "https://docs.zenml.io"
@@ -29,9 +27,6 @@ classifiers = [
 [tool.poetry.dependencies]
 kserve = "0.9.0"
 torch-model-archiver = ">=0"
-
-[tool.poetry.plugins.'zenml.plugins']
-kserve = 'zenml_hub_kserve'
 
 [build-system]
 requires = ["poetry-core"]

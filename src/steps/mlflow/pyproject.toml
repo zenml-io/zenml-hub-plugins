@@ -3,9 +3,7 @@ name = "zenml_hub_mlflow"
 description = "ZenML MLflow steps"
 version = "0.0.1"
 authors = ["ZenML GmbH <info@zenml.io>"]
-packages = [
-    { include = "zenml_hub_mlflow", from = "src" },
-]
+packages = [{include = "zenml", from = "src"}]
 readme = "README.md"
 homepage = "https://zenml.io"
 documentation = "https://docs.zenml.io"
@@ -30,9 +28,6 @@ classifiers = [
 mlflow = ">=1.24.0"
 mlserver = ">=0.5.3"
 mlserver-mlflow = ">=0.5.3"
-
-[tool.poetry.plugins.'zenml.plugins']
-mlflow = 'zenml_hub_mlflow'
 
 [build-system]
 requires = ["poetry-core"]
