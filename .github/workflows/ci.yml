@@ -4,11 +4,13 @@ on:
         types: [opened, synchronize, ready_for_review]
         paths-ignore: ["!pyproject.toml",]
 jobs:
-  ci-process:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Spelling checker
-        uses: crate-ci/typos@master
-        with:
-          files: "."
-          config: ./.typos.toml
+    ci-process:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Spelling checker
+              uses: crate-ci/typos@master
+              with:
+                files: "."
+                config: ./.typos.toml
