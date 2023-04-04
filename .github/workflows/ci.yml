@@ -1,0 +1,14 @@
+name: Hub Plugins CI
+on:
+    pull_request:
+        types: [opened, synchronize, ready_for_review]
+        paths-ignore: ["!pyproject.toml",]
+jobs:
+  ci-process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Spelling checker
+        uses: crate-ci/typos@master
+        with:
+          files: "."
+          config: ./.typos.toml
