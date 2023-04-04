@@ -1,2 +1,2 @@
-zenml>=0.36.1
+zenml>=0.37.0
 kubernetes==18.20.0
