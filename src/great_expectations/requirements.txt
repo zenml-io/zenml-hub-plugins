@@ -1,0 +1,2 @@
+zenml>=0.37.0
+great-expectations>=0.15.0,<=0.15.47

@@ -1,0 +1,2 @@
+zenml>=0.37.0
+evidently==0.2.2

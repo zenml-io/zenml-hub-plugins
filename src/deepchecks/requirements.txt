@@ -1,0 +1,3 @@
+zenml>=0.37.0
+deepchecks[vision]==0.8.0
+torchvision==0.14.0
