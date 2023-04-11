@@ -23,10 +23,12 @@ ZenML projects using `zenml init --template`
     - CIFAR-10: `pytorch_cifar10_loader_step`
     - CIFAR-100: `pytorch_cifar100_loader_step`
 - **tensorflow_dataset_steps**: Steps for loading popular computer vision datasets from `tf.keras.datasets`
-    - MNIST: `tensorflow_mnist_loader_step`
-    - Fashion-MNIST: `tensorflow_fashion_mnist_loader_step`
     - CIFAR-10: `tensorflow_cifar10_loader_step`
     - CIFAR-100: `tensorflow_cifar100_loader_step`
+    - Fashion-MNIST: `tensorflow_fashion_mnist_loader_step`
+    - IMDB: `tensorflow_imdb_loader_step`
+    - MNIST: `tensorflow_mnist_loader_step`
+    - Reuters: `tensorflow_reuters_loader_step`
 
 ### Using Stack Components
 
