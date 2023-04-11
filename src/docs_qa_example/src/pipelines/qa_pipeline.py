@@ -40,9 +40,9 @@ def build_zenml_docs_qa_pipeline(question: str, load_all_paths: bool = True):
     Returns:
         A ZenML pipeline that can answer questions about the ZenML docs.
     """
-    from src.steps.docs_loader import DocsLoaderParameters, docs_loader_step
-    from src.steps.index_generator import index_generator_step
-    from src.steps.question_answerer import (
+    from ..steps.docs_loader import DocsLoaderParameters, docs_loader_step
+    from ..steps.index_generator import index_generator_step
+    from ..steps.question_answerer import (
         QAParameters,
         question_answerer_step,
     )
