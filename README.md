@@ -15,7 +15,8 @@ ZenML projects using `zenml init --template`
     - Digit: `sklearn_digits_loader_step`
     - Iris: `sklearn_iris_loader_step`
     - Diabetes: `sklearn_diabetes_loader_step`
-    - Breast Cancer Wisconsin: `sklearn_breast_cancer_loader_step` 
+    - Breast Cancer Wisconsin: `sklearn_breast_cancer_loader_step`
+    - Wine: `sklearn_wine_loader_step`
 - **torchvision_dataset_steps**: Steps for loading popular computer vision datasets from `torchvision.datasets`
     - MNIST: `pytorch_mnist_loader_step`
     - Fashion-MNIST: `pytorch_fashion_mnist_loader_step`
