@@ -42,19 +42,29 @@ def question_answerer_step(
     Returns:
         The generated answer.
     """
-    llm = OpenAI(temperature=0, max_tokens=1000, model_name="gpt-3.5-turbo")
-    chatgpt_chain = ChatVectorDBChain.from_llm(
-        llm=llm, vectorstore=vector_store
-    )
-    seq_chain = SequentialChain(
-        chains=[chatgpt_chain],
-        input_variables=["chat_history", "question"],
-    )
-    answer = seq_chain.run(
-        chat_history=[],
-        question=params.question,
-        verbose=False,
-    )
+    import logging
+    import warnings
+
+    # Suppress all warnings and non-error logs.
+    logging.getLogger().setLevel(logging.ERROR)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        llm = OpenAI(
+            temperature=0, max_tokens=1000, model_name="gpt-3.5-turbo"
+        )
+        chatgpt_chain = ChatVectorDBChain.from_llm(
+            llm=llm, vectorstore=vector_store
+        )
+        seq_chain = SequentialChain(
+            chains=[chatgpt_chain],
+            input_variables=["chat_history", "question"],
+        )
+        answer = seq_chain.run(
+            chat_history=[],
+            question=params.question,
+            verbose=False,
+        )
+
     print(f"Question: {params.question}")
     print(f"Answer: {answer}")
     return answer
