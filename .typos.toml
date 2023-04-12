@@ -1,0 +1,13 @@
+[files]
+extend-exclude = ["*.json"]
+
+[default.extend-identifiers]
+# HashiCorp = "HashiCorp"
+
+
+[default.extend-words]
+# Don't correct the surname "Teh"
+# aks = "aks"
+
+[default]
+locale = "en-us"
