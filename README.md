@@ -40,6 +40,9 @@ ZenML projects using `zenml init --template`
     - Youtube transcript loader: `langchain_youtube_loader_step`
     - Slack loader: `slack_loader_step`
     - Web URL loader: `web_url_loader_step`
+- **llama_index_loader_steps**: Steps for loading datasets from the [LLAMA Index
+  Hub](https://llamahub.ai/)
+    - LLAMA Index Loader: `llama_index_loader_step`
 
 ### Using Stack Components
 
