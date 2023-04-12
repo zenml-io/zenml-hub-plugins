@@ -13,15 +13,11 @@
 #  permissions and limitations under the License.
 
 
-from typing import Optional, List, Union
+from typing import List
 
-from datasets import DatasetDict, load_dataset
-from zenml.steps import BaseParameters, step
 from langchain.docstore.document import Document
-from langchain.document_loaders.csv_loader import CSVLoader
-from langchain.document_loaders import UnstructuredMarkdownLoader
-from langchain.document_loaders import NotionDirectoryLoader
 from langchain.document_loaders import YoutubeLoader
+from zenml.steps import BaseParameters, step
 
 
 class LangchainYoutubeLoaderStepParameters(BaseParameters):
