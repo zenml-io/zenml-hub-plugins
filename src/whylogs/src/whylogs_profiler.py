@@ -17,8 +17,6 @@ import datetime
 from typing import Optional, cast
 
 import pandas as pd
-from whylogs.core import DatasetProfileView  # type: ignore
-
 from zenml.integrations.whylogs.data_validators.whylogs_data_validator import (
     WhylogsDataValidator,
 )
@@ -29,6 +27,8 @@ from zenml.integrations.whylogs.flavors.whylogs_data_validator_flavor import (
 from zenml.steps.base_parameters import BaseParameters
 from zenml.steps.base_step import BaseStep
 from zenml.utils import settings_utils
+
+from whylogs.core import DatasetProfileView  # type: ignore
 
 
 class WhylogsProfilerParameters(BaseParameters):

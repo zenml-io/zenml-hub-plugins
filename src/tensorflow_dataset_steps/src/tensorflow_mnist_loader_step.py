@@ -15,16 +15,17 @@
 
 import numpy as np
 import tensorflow as tf
-
 from zenml.steps import Output, step
 
 
 @step
-def mnist_tf_loader() -> Output(
-    x_train=np.ndarray,
-    y_train=np.ndarray,
-    x_test=np.ndarray,
-    y_test=np.ndarray,
+def mnist_tf_loader() -> (
+    Output(
+        x_train=np.ndarray,
+        y_train=np.ndarray,
+        x_test=np.ndarray,
+        y_test=np.ndarray,
+    )
 ):
     """Download the MNIST data store it as an artifact."""
     (x_train, y_train), (

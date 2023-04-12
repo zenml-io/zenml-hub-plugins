@@ -17,7 +17,6 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 
 import pandas as pd
 from pydantic import Field, root_validator
-
 from zenml.integrations.evidently.column_mapping import EvidentlyColumnMapping
 from zenml.integrations.evidently.data_validators import EvidentlyDataValidator
 from zenml.integrations.evidently.metrics import EvidentlyMetricConfig

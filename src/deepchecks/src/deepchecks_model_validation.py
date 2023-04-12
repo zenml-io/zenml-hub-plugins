@@ -16,10 +16,8 @@
 from typing import Any, Dict, Optional, Sequence, cast
 
 import pandas as pd
-from deepchecks.core.suite import SuiteResult
 from pydantic import Field
 from sklearn.base import ClassifierMixin
-
 from zenml.integrations.deepchecks.data_validators.deepchecks_data_validator import (
     DeepchecksDataValidator,
 )
@@ -27,6 +25,8 @@ from zenml.integrations.deepchecks.validation_checks import (
     DeepchecksModelValidationCheck,
 )
 from zenml.steps import BaseParameters, BaseStep
+
+from deepchecks.core.suite import SuiteResult
 
 
 class DeepchecksModelValidationCheckStepParameters(BaseParameters):
