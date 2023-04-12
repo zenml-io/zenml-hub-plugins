@@ -30,6 +30,8 @@ ZenML projects using `zenml init --template`
     - IMDB: `tensorflow_imdb_loader_step`
     - MNIST: `tensorflow_mnist_loader_step`
     - Reuters: `tensorflow_reuters_loader_step`
+- **huggingface_hub_steps**: Steps for loading datasets from the [HuggingFace Hub](https://huggingface.co/datasets)
+    - Hub Dataset Loader: `huggingface_hub_loader_step`
 
 ### Using Stack Components
 
