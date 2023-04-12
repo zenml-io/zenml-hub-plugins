@@ -12,7 +12,7 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-from pytorch_cifar10_loader_step import cifar10_loader
-from pytorch_cifar100_loader_step import cifar100_loader
-from pytorch_fashion_mnist_loader_step import fashion_mnist_loader
-from pytorch_mnist_loader_step import mnist_loader
+from .pytorch_cifar10_loader_step import cifar10_loader
+from .pytorch_cifar100_loader_step import cifar100_loader
+from .pytorch_fashion_mnist_loader_step import fashion_mnist_loader
+from .pytorch_mnist_loader_step import mnist_loader

@@ -16,9 +16,7 @@
 from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 
 import pandas as pd
-from evidently.model_profile import Profile  # type: ignore[import]
 from pydantic import Field
-
 from zenml.integrations.evidently.column_mapping import (
     EvidentlyColumnMapping,
 )
@@ -26,6 +24,8 @@ from zenml.integrations.evidently.data_validators import EvidentlyDataValidator
 from zenml.steps import Output
 from zenml.steps.base_parameters import BaseParameters
 from zenml.steps.base_step import BaseStep
+
+from evidently.model_profile import Profile  # type: ignore[import]
 
 
 class EvidentlyProfileParameters(BaseParameters):

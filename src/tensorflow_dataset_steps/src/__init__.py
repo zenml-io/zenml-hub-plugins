@@ -12,9 +12,9 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-from tensorflow_cifar10_loader_step import cifar10_tf_loader
-from tensorflow_cifar100_loader_step import cifar100_tf_loader
-from tensorflow_fashion_mnist_loader_step import fashion_mnist_tf_loader
-from tensorflow_imdb_loader_step import imdb_tf_loader
-from tensorflow_mnist_loader_step import mnist_tf_loader
-from tensorflow_reuters_loader_step import reuters_tf_loader
+from .tensorflow_cifar10_loader_step import cifar10_tf_loader
+from .tensorflow_cifar100_loader_step import cifar100_tf_loader
+from .tensorflow_fashion_mnist_loader_step import fashion_mnist_tf_loader
+from .tensorflow_imdb_loader_step import imdb_tf_loader
+from .tensorflow_mnist_loader_step import mnist_tf_loader
+from .tensorflow_reuters_loader_step import reuters_tf_loader
