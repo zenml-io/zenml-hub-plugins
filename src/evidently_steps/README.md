@@ -1,0 +1,2 @@
+# evidently_steps
+Steps using ZenML's `evidently` data validator integration, which allow you to perform data quality, data drift, model drift and model performance analyses, to generate reports and run checks. The reports and check results can be used to implement automated corrective actions in your pipelines or to render interactive representations for further visual interpretation, evaluation and documentation.

@@ -1,0 +1,2 @@
+# deepchecks_steps
+Steps using ZenML's Deepchecks data validator integration which allow you to run data integrity, data drift, model drift and model performance tests on the datasets and models circulated in your ZenML pipelines. The test results can be used to implement automated corrective actions in your pipelines or to render interactive representations for further visual interpretation, evaluation and documentation.
