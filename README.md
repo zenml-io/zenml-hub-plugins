@@ -1,11 +1,8 @@
 # Official ZenML Hub Plugins
 
-## Templates
+## Examples
 
-- **plugin_template**: [ZenML Hub plugin template](https://github.com/zenml-io/zenml-hub-plugin-template) 
-that can be used as a starting point for building new plugins
-- **project_template**: Tool to auto-generate the basic scaffolding for new 
-ZenML projects using `zenml init --template`
+- **langchain_qa_example**: Example using langchain to ask questions to GPT about the ZenML documentation
 
 ## Steps
 
