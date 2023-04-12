@@ -16,14 +16,15 @@
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-
 from zenml.steps import Output, step
 
 
 @step
-def cifar10_loader() -> Output(
-    train_dataloader=DataLoader,
-    test_dataloader=DataLoader,
+def cifar10_loader() -> (
+    Output(
+        train_dataloader=DataLoader,
+        test_dataloader=DataLoader,
+    )
 ):
     """Download the CIFAR10 dataset."""
     # Download training data from open datasets.

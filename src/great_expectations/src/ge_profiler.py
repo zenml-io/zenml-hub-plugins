@@ -16,14 +16,14 @@
 from typing import Any, Dict, Optional
 
 import pandas as pd
-from great_expectations.core import ExpectationSuite  # type: ignore[import]
 from pydantic import Field
-
 from zenml.integrations.great_expectations.data_validators.ge_data_validator import (
     GreatExpectationsDataValidator,
 )
 from zenml.logger import get_logger
 from zenml.steps import BaseParameters, BaseStep
+
+from great_expectations.core import ExpectationSuite  # type: ignore[import]
 
 logger = get_logger(__name__)
 

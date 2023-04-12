@@ -16,14 +16,14 @@
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
-from great_expectations.checkpoint.types.checkpoint_result import (  # type: ignore[import]
-    CheckpointResult,
-)
-
 from zenml.integrations.great_expectations.data_validators.ge_data_validator import (
     GreatExpectationsDataValidator,
 )
 from zenml.steps import BaseParameters, BaseStep
+
+from great_expectations.checkpoint.types.checkpoint_result import (  # type: ignore[import]
+    CheckpointResult,
+)
 
 
 class GreatExpectationsValidatorParameters(BaseParameters):
