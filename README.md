@@ -32,6 +32,14 @@ ZenML projects using `zenml init --template`
     - Reuters: `tensorflow_reuters_loader_step`
 - **huggingface_hub_steps**: Steps for loading datasets from the [HuggingFace Hub](https://huggingface.co/datasets)
     - Hub Dataset Loader: `huggingface_hub_loader_step`
+- **langchain_loader_steps**: Steps for loading documents from the [LangChain](https://github.com/hwchase17/) framework
+    - Gitbook loader: `gitbook_docs_loader_step`
+    - CSV loader: `langchain_csv_loader_step`
+    - Markdown loader: `langchain_markdown_loader_step`
+    - Notion loader: `langchain_notion_loader_step`
+    - Youtube transcript loader: `langchain_youtube_loader_step`
+    - Slack loader: `slack_loader_step`
+    - Web URL loader: `web_url_loader_step`
 
 ### Using Stack Components
 
