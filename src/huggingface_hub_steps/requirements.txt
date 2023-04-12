@@ -1,0 +1,2 @@
+zenml>=0.37.0
+datasets
