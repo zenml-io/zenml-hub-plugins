@@ -12,4 +12,4 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 
-from huggingface_hub_loader_step import huggingface_hub_dataset_loader
+from huggingface_hub_loader_step import huggingface_hub_dataset_loader_step

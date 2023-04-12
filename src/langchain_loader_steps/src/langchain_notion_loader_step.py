@@ -33,7 +33,7 @@ class LangchainNotionLoaderStepParameters(BaseParameters):
 
 
 @step
-def langchain_notion_document_loader(
+def langchain_notion_document_loader_step(
     params: LangchainNotionLoaderStepParameters,
 ) -> List[Document]:
     """Load Notion database files as langchain documents.

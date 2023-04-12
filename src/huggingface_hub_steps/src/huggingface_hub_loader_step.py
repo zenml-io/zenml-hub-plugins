@@ -33,7 +33,7 @@ class HuggingfaceHubDatasetLoaderStepParameters(BaseParameters):
 
 
 @step
-def huggingface_hub_dataset_loader(
+def huggingface_hub_dataset_loader_step(
     params: HuggingfaceHubDatasetLoaderStepParameters,
 ) -> DatasetDict:
     """Download datasets from the Huggingface Hub.

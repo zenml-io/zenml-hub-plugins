@@ -37,7 +37,7 @@ class LangchainYoutubeLoaderStepParameters(BaseParameters):
 
 
 @step
-def langchain_youtube_document_loader(
+def langchain_youtube_document_loader_step(
     params: LangchainYoutubeLoaderStepParameters,
 ) -> List[Document]:
     """Load Youtube videos and their transcripts as langchain documents.

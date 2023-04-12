@@ -31,7 +31,7 @@ class LangchainMarkdownLoaderStepParameters(BaseParameters):
 
 
 @step
-def langchain_markdown_document_loader(
+def langchain_markdown_document_loader_step(
     params: LangchainMarkdownLoaderStepParameters,
 ) -> List[Document]:
     """Load markdown files as langchain documents.

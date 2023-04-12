@@ -31,7 +31,7 @@ class LangchainCSVLoaderStepParameters(BaseParameters):
 
 
 @step
-def langchain_csv_document_loader(
+def langchain_csv_document_loader_step(
     params: LangchainCSVLoaderStepParameters,
 ) -> List[Document]:
     """Load csv files with a single row per document.
