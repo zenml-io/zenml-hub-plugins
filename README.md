@@ -15,17 +15,21 @@ ZenML projects using `zenml init --template`
     - Digit: `sklearn_digits_loader_step`
     - Iris: `sklearn_iris_loader_step`
     - Diabetes: `sklearn_diabetes_loader_step`
-    - Breast Cancer Wisconsin: `sklearn_breast_cancer_loader_step` 
+    - Breast Cancer Wisconsin: `sklearn_breast_cancer_loader_step`
+    - Wine: `sklearn_wine_loader_step`
+    - OpenML: `sklearn_openml_loader_step`
 - **torchvision_dataset_steps**: Steps for loading popular computer vision datasets from `torchvision.datasets`
     - MNIST: `pytorch_mnist_loader_step`
     - Fashion-MNIST: `pytorch_fashion_mnist_loader_step`
     - CIFAR-10: `pytorch_cifar10_loader_step`
     - CIFAR-100: `pytorch_cifar100_loader_step`
 - **tensorflow_dataset_steps**: Steps for loading popular computer vision datasets from `tf.keras.datasets`
-    - MNIST: `tensorflow_mnist_loader_step`
-    - Fashion-MNIST: `tensorflow_fashion_mnist_loader_step`
     - CIFAR-10: `tensorflow_cifar10_loader_step`
     - CIFAR-100: `tensorflow_cifar100_loader_step`
+    - Fashion-MNIST: `tensorflow_fashion_mnist_loader_step`
+    - IMDB: `tensorflow_imdb_loader_step`
+    - MNIST: `tensorflow_mnist_loader_step`
+    - Reuters: `tensorflow_reuters_loader_step`
 
 ### Using Stack Components
 
