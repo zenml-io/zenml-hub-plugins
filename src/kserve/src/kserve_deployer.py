@@ -16,7 +16,6 @@ import os
 from typing import List, Optional, cast
 
 from pydantic import BaseModel, validator
-
 from zenml.client import Client
 from zenml.constants import MODEL_METADATA_YAML_FILE_NAME
 from zenml.environment import Environment

@@ -16,20 +16,25 @@
 import pandas as pd
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
-
 from zenml.steps import Output, step
 
 
 @step
-def wine_data_loader() -> Output(
-    X_train=pd.DataFrame,
-    X_test=pd.DataFrame,
-    y_train=pd.Series,
-    y_test=pd.Series,
+def wine_data_loader() -> (
+    Output(
+        X_train=pd.DataFrame,
+        X_test=pd.DataFrame,
+        y_train=pd.Series,
+        y_test=pd.Series,
+    )
 ):
     """Load the wine dataset as tuple of Pandas DataFrame / Series."""
     wine_dataset = load_wine(as_frame=True)
     X_train, X_test, y_train, y_test = train_test_split(
-        wine_dataset.data, wine_dataset.target, test_size=0.2, shuffle=True, random_state=42
+        wine_dataset.data,
+        wine_dataset.target,
+        test_size=0.2,
+        shuffle=True,
+        random_state=42,
     )
     return X_train, X_test, y_train, y_test

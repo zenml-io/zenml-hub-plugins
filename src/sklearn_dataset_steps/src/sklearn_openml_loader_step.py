@@ -13,12 +13,12 @@
 #  permissions and limitations under the License.
 """Step that loads an OpenML dataset."""
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import fetch_openml
 from typing import Optional
 
-from zenml.steps import Output, step, BaseParameters
+import pandas as pd
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from zenml.steps import BaseParameters, Output, step
 
 
 class OpenMLDataLoaderStepParameters(BaseParameters):
@@ -36,7 +36,9 @@ class OpenMLDataLoaderStepParameters(BaseParameters):
 
 
 @step
-def openml_data_loader(params: OpenMLDataLoaderStepParameters,) -> Output(
+def openml_data_loader(
+    params: OpenMLDataLoaderStepParameters,
+) -> Output(
     X_train=pd.DataFrame,
     X_test=pd.DataFrame,
     y_train=pd.Series,
@@ -44,8 +46,16 @@ def openml_data_loader(params: OpenMLDataLoaderStepParameters,) -> Output(
 ):
     """Load an OpenML dataset as tuple of Pandas DataFrame / Series."""
     openml_dataset = fetch_openml(
-        name=params.dataset_name, version=params.dataset_version, parser=params.dataset_parser, as_frame=True)
+        name=params.dataset_name,
+        version=params.dataset_version,
+        parser=params.dataset_parser,
+        as_frame=True,
+    )
     X_train, X_test, y_train, y_test = train_test_split(
-        openml_dataset.data, openml_dataset.target, test_size=0.2, shuffle=True, random_state=42
+        openml_dataset.data,
+        openml_dataset.target,
+        test_size=0.2,
+        shuffle=True,
+        random_state=42,
     )
     return X_train, X_test, y_train, y_test

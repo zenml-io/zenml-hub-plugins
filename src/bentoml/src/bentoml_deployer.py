@@ -14,9 +14,6 @@
 """Implementation of the BentoML model deployer pipeline step."""
 from typing import List, Optional, cast
 
-import bentoml
-from bentoml._internal.bento import bento
-
 from zenml.environment import Environment
 from zenml.integrations.bentoml.model_deployers.bentoml_model_deployer import (
     BentoMLModelDeployer,
@@ -34,6 +31,9 @@ from zenml.steps import (
     step,
 )
 from zenml.utils import source_utils
+
+import bentoml
+from bentoml._internal.bento import bento
 
 logger = get_logger(__name__)
 
